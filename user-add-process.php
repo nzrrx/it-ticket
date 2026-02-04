@@ -19,6 +19,13 @@ if (empty($name) || empty($email) || empty($password) || empty($role)) {
     exit;
 }
 
+/* VALIDASI PANJANG PASSWORD (minimal 6 karakter) */
+if (strlen($password) < 6) {
+    $_SESSION['flash_error'] = 'Password harus minimal 6 karakter.';
+    header("Location: user-add.php");
+    exit;
+}
+
 /* HASH PASSWORD */
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
@@ -47,3 +54,4 @@ $_SESSION['flash_success'] = 'User berhasil dibuat.';
 
 header("Location: user-add.php");
 exit;
+?>

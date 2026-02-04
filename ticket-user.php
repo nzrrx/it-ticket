@@ -51,53 +51,10 @@ $tickets = $stmt->get_result();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
-    <style>
-        body {
-            background-color: #f0f9ff;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background: linear-gradient(180deg, #0ea5e9, #0284c7);
-            position: fixed;
-            color: #fff;
-        }
-
-        .sidebar a {
-            color: #e0f2fe;
-            text-decoration: none;
-            display: block;
-            padding: 12px 20px;
-            border-radius: 10px;
-            margin-bottom: 5px;
-        }
-
-        .sidebar h4 {
-            font-weight: 700;
-        }
-
-        .sidebar a.active,
-        .sidebar a:hover {
-            background: rgba(255, 255, 255, .2);
-        }
-
-        .content {
-            margin-left: 260px;
-            padding: 30px;
-        }
-
-        .badge-status {
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="assets/css/hp.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -122,12 +79,34 @@ $tickets = $stmt->get_result();
         </a>
     </div>
 
+    <div class="mobile-nav-bar d-md-none">
+    <a href="dashboard.php" class="nav-item active">
+        <i class="bi bi-house-door"></i>
+        <span>Home</span>
+    </a>
+    <a href="ticket-user.php" class="nav-item">
+        <i class="bi bi-ticket-perforated"></i>
+        <span>Tiket Saya</span>
+    </a>
+    <a href="add-ticket.php" class="nav-item">
+        <i class="bi bi-plus-circle"></i>
+        <span>Buat Tiket</span>
+    </a>
+    <a href="profil.php" class="nav-item">
+        <i class="bi bi-person"></i>
+        <span>Profil</span>
+    </a>
+    <a href="logout.php" class="nav-item">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+</div>
+
     <div class="content">
         <h4 class="mb-4">
             <i class="bi bi-ticket-perforated"></i> Tiket Saya
         </h4>
 
-        <div class="card shadow-sm border-0">
             <div class="card-body">
 
                 <?php if ($tickets->num_rows === 0): ?>
@@ -193,5 +172,4 @@ $tickets = $stmt->get_result();
 
                 <?php endif; ?>
             </div>
-        </div>
     </div>

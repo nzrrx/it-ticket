@@ -120,6 +120,7 @@ $userList = $conn->query("
 
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link href="assets/css/hp.css" rel="stylesheet">
 
 
     <style>
@@ -205,6 +206,29 @@ $userList = $conn->query("
             <i class="bi bi-box-arrow-right me-2"></i> Logout
         </a>
     </div>
+
+       <div class="mobile-nav-bar d-md-none">
+    <a href="ticket.php" class="nav-item active">
+        <i class="bi bi-house-door"></i>
+        <span>Home</span>
+    </a>
+    <a href="ticket-admin.php" class="nav-item">
+        <i class="bi bi-ticket-perforated"></i>
+        <span>Semua Tiket</span>
+    </a>
+    <a href="data-user.php" class="nav-item">
+        <i class="bi bi-people me-2"></i>
+        <span>Data User</span>
+    </a>
+    <a href="#" class="nav-item">
+        <i class="bi bi-gear"></i>
+        <span>Pengaturan</span>
+    </a>
+    <a href="logout.php" class="nav-item">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+</div>
 
     <div class="content">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -337,14 +361,15 @@ $(document).ready(function () {
                             <th>
                                 <input type="checkbox" id="checkAll">
                             </th>
-                            <th>#</th>
+                            <th>No</th>
                             <th>Nama</th>
                             <th>Judul</th>
                             <th>Kategori</th>
                             <th>Prioritas</th>
                             <th>Status</th>
                             <th>Dibuat</th>
-                            <th>Di-Close Oleh</th>
+                            <th>Assigned</th>
+                            <th>Diupdate</th>
                         </tr>
                     </thead>
                     <tbody class="table-light text-center">
@@ -390,6 +415,7 @@ $(document).ready(function () {
                                         <span class="text-muted">-</span>
                                     <?php endif; ?>
                                 </td>
+                                <td><?= date('d M Y H:i', strtotime($row['updated_at'])) ?></td>
 
                             </tr>
                         <?php endwhile; ?>

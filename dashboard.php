@@ -115,70 +115,19 @@ $previewMessages = $stmtPreview->get_result();
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="assets/css/hp.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <script src="assets/js/dashboard.js" type="text/javascript"></script>
 
 
     <style>
-        body {
-            background-color: #f0f9ff;
-            font-family: 'Segoe UI', sans-serif;
-        }
 
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background: linear-gradient(180deg, #0ea5e9, #0284c7);
-            position: fixed;
-            color: #fff;
-        }
-
-        .sidebar h4 {
-            font-weight: 700;
-        }
-
-        .sidebar a {
-            color: #e0f2fe;
-            text-decoration: none;
-            display: block;
-            padding: 12px 20px;
-            border-radius: 10px;
-            margin-bottom: 5px;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background-color: rgba(255,255,255,0.2);
-        }
-
-        .content {
-            margin-left: 260px;
-            padding: 30px;
-        }
-
-        .card-stat {
-            border: none;
-            border-radius: 18px;
-            box-shadow: 0 10px 25px rgba(14,165,233,.2);
-        }
-
-        .card-stat i {
-            font-size: 2rem;
-            color: #0ea5e9;
-        }
-
-        .topbar {
-            background-color: #ffffff;
-            border-radius: 15px;
-            padding: 15px 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,.08);
-            margin-bottom: 25px;
-        }
     </style>
 </head>
 <body>
 
 <!-- SIDEBAR -->
-<div class="sidebar p-4">
+<div class="sidebar d-none d-md-block" id="sidebar">
     <h4 class="mb-4">🎫 MICS IT</h4>
 
     <a href="dashboard.php"  class="active">
@@ -197,12 +146,34 @@ $previewMessages = $stmtPreview->get_result();
         <i class="bi bi-box-arrow-right me-2"></i> Logout
     </a>
 </div>
+<div class="mobile-nav-bar d-md-none">
+    <a href="dashboard.php" class="nav-item active">
+        <i class="bi bi-house-door"></i>
+        <span>Home</span>
+    </a>
+    <a href="ticket-user.php" class="nav-item">
+        <i class="bi bi-ticket-perforated"></i>
+        <span>Tiket Saya</span>
+    </a>
+    <a href="add-ticket.php" class="nav-item">
+        <i class="bi bi-plus-circle"></i>
+        <span>Buat Tiket</span>
+    </a>
+    <a href="profil.php" class="nav-item">
+        <i class="bi bi-person"></i>
+        <span>Profil</span>
+    </a>
+    <a href="logout.php" class="nav-item">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+</div>
 
 <!-- CONTENT -->
 <div class="content">
 
     <!-- TOP BAR -->
-    <div class="topbar d-flex justify-content-between align-items-center">
+    <div class="topbar d-flex flex-wrap gap-3 justify-content-between align-items-center">
     <div>
         <h5 class="mb-0">Selamat datang 👋</h5>
         <small class="text-muted"><?= $_SESSION['email']; ?></small>
@@ -419,26 +390,7 @@ $previewMessages = $stmtPreview->get_result();
 
 
 </div>
-<script>
-document.getElementById('messageDropdown')
-    .addEventListener('show.bs.dropdown', function () {
 
-        //mark read
-    });
-</script>
-<script>
-document.querySelectorAll('.message-item').forEach(item => {
-    item.addEventListener('click', function () {
-        const messageId = this.dataset.messageId;
-
-        fetch('mark-read.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'message_id=' + messageId
-        });
-    });
-});
-</script>
 
 </body>
 </html>

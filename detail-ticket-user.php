@@ -112,58 +112,11 @@ $stmt->execute();
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-        body {
-            background: #f0f9ff;
-            font-family: 'Segoe UI', sans-serif
-        }
-
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background: linear-gradient(180deg, #0ea5e9, #0284c7);
-            position: fixed;
-            color: #fff
-        }
-
-        .sidebar a {
-            color: #e0f2fe;
-            text-decoration: none;
-            display: block;
-            padding: 12px 20px;
-            border-radius: 10px;
-            margin-bottom: 5px
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: rgba(255, 255, 255, .2)
-        }
-
-        .content {
-            margin-left: 260px;
-            padding: 30px
-        }
-
-        .card {
-            border: none;
-            border-radius: 18px;
-            box-shadow: 0 10px 25px rgba(14, 165, 233, .2)
-        }
-
-        .badge-open {
-            background: #3b82f6
-        }
-
-        .badge-process {
-            background: #f59e0b
-        }
-
-        .badge-closed {
-            background: #22c55e
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="assets/css/hp.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -181,13 +134,36 @@ $stmt->execute();
         <a href="ticket-user.php"  class="active">
             <i class="bi bi-ticket-detailed me-2"></i> Tiket Saya
         </a>
-        <a href="#">
+        <a href="profil.php">
             <i class="bi bi-person me-2"></i> Profil
         </a>
         <a href="logout.php">
             <i class="bi bi-box-arrow-right me-2"></i> Logout
         </a>
     </div>
+
+    <div class="mobile-nav-bar d-md-none">
+    <a href="dashboard.php" class="nav-item active">
+        <i class="bi bi-house-door"></i>
+        <span>Home</span>
+    </a>
+    <a href="ticket-user.php" class="nav-item">
+        <i class="bi bi-ticket-perforated"></i>
+        <span>Tiket Saya</span>
+    </a>
+    <a href="add-ticket.php" class="nav-item">
+        <i class="bi bi-plus-circle"></i>
+        <span>Buat Tiket</span>
+    </a>
+    <a href="profil.php" class="nav-item">
+        <i class="bi bi-person"></i>
+        <span>Profil</span>
+    </a>
+    <a href="logout.php" class="nav-item">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+</div>
 
     <!-- CONTENT -->
     <div class="content">
@@ -271,7 +247,7 @@ $stmt->execute();
 
             <!-- PERCAPAKAN -->
 <div class="col-md-4">
-    <div class="card p-4">
+    <div class="card-back p-4">
         <a href="ticket-user.php" class="btn btn-outline-secondary w-100">
                         <i class="bi bi-arrow-left"></i> Kembali
                     </a>

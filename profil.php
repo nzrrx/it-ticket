@@ -34,24 +34,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         exit;
     }
 
-    // 3️⃣ Ambil password lama dari DB
+    // 3️⃣ Validasi panjang password baru (minimal 6 karakter)
+    if (strlen($new_password) < 6) {
+        $_SESSION['error'] = "Password baru harus minimal 6 karakter.";
+        header("Location: profil.php");
+        exit;
+    }
+
+    // 4️⃣ Ambil password lama dari DB
     $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
     $stmt->bind_param("i", $_SESSION['user_id']);
     $stmt->execute();
     $result = $stmt->get_result()->fetch_assoc();
 
-    // 4️⃣ Verifikasi password lama
+    // 5️⃣ Verifikasi password lama
     if (!$result || !password_verify($old_password, $result['password'])) {
         $_SESSION['error'] = "Password lama salah.";
         header("Location: profil.php");
         exit;
     }
 
-    // 5️⃣ Update password
+    // 6️⃣ Update password
     $hashed = password_hash($new_password, PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-    $stmt->bind_param("si", $hashed, $_SESSION['user_id']);
+    $stmt->bind_param("si", $_SESSION['user_id']);
     $stmt->execute();
 
     $_SESSION['success'] = "Password berhasil diperbarui.";
@@ -67,8 +74,6 @@ if (isset($_SESSION['password_changed'])) {
     // HAPUS SESSION SETELAH HTML (nanti)
 }
 
-
-
 /* AMBIL DATA USER */
 $stmt = $conn->prepare("
     SELECT id, name, email, role, created_at
@@ -80,7 +85,6 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="id">
@@ -100,20 +104,31 @@ $user = $stmt->get_result()->fetch_assoc();
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/hp.css" rel="stylesheet">
 
     <!-- CSS (SAMA DENGAN DASHBOARD) -->
     <style>
+        /* ======================
+   GLOBAL
+====================== */
         body {
             background-color: #f0f9ff;
             font-family: 'Segoe UI', sans-serif;
+            margin: 0;
         }
 
+        /* ======================
+   SIDEBAR
+====================== */
         .sidebar {
             width: 250px;
-            height: 100vh;
+            min-height: 100vh;
             background: linear-gradient(180deg, #0ea5e9, #0284c7);
             position: fixed;
+            top: 0;
+            left: 0;
             color: #fff;
+            padding: 24px;
         }
 
         .sidebar h4 {
@@ -126,7 +141,7 @@ $user = $stmt->get_result()->fetch_assoc();
             display: block;
             padding: 12px 20px;
             border-radius: 10px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             transition: 0.3s;
         }
 
@@ -135,23 +150,45 @@ $user = $stmt->get_result()->fetch_assoc();
             background-color: rgba(255, 255, 255, 0.2);
         }
 
+        /* ======================
+   CONTENT
+====================== */
         .content {
-            margin-left: 260px;
+            margin-left: 250px;
             padding: 30px;
+            min-height: 100vh;
         }
 
+        /* ======================
+   CARD
+====================== */
         .card-stat {
             border: none;
             border-radius: 18px;
             box-shadow: 0 10px 25px rgba(14, 165, 233, .2);
+            background: #fff;
         }
 
+        .card-stat i {
+            font-size: 2rem;
+            color: #0ea5e9;
+        }
+
+        /* ======================
+   TOPBAR
+====================== */
         .topbar {
             background-color: #ffffff;
             border-radius: 15px;
             padding: 15px 25px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
             margin-bottom: 25px;
+
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .profile-avatar {
@@ -167,27 +204,7 @@ $user = $stmt->get_result()->fetch_assoc();
             margin-bottom: 15px;
         }
     </style>
-    <script>
-        document.getElementById('changePasswordForm')
-            .addEventListener('submit', function(e) {
 
-                e.preventDefault(); // hentikan submit default
-
-                Swal.fire({
-                    title: 'Konfirmasi Perubahan Password',
-                    text: 'Apakah Anda yakin ingin mengganti password?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Ganti',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#f59e0b'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        e.target.submit(); // submit form manual
-                    }
-                });
-            });
-    </script>
 
 
 </head>
@@ -215,6 +232,29 @@ $user = $stmt->get_result()->fetch_assoc();
         </a>
     </div>
 
+    <div class="mobile-nav-bar d-md-none">
+    <a href="dashboard.php" class="nav-item active">
+        <i class="bi bi-house-door"></i>
+        <span>Home</span>
+    </a>
+    <a href="ticket-user.php" class="nav-item">
+        <i class="bi bi-ticket-perforated"></i>
+        <span>Tiket Saya</span>
+    </a>
+    <a href="add-ticket.php" class="nav-item">
+        <i class="bi bi-plus-circle"></i>
+        <span>Buat Tiket</span>
+    </a>
+    <a href="profil.php" class="nav-item">
+        <i class="bi bi-person"></i>
+        <span>Profil</span>
+    </a>
+    <a href="logout.php" class="nav-item">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+</div>
+
     <!-- CONTENT -->
     <div class="content">
 
@@ -223,7 +263,7 @@ $user = $stmt->get_result()->fetch_assoc();
             <div>
                 <h5 class="mb-0">Profil Saya</h5>
                 <small class="text-muted">
-                    <?= htmlspecialchars($_SESSION['email'] ?? '-' ) ?></small>
+                    <?= htmlspecialchars($_SESSION['email'] ?? '-') ?></small>
             </div>
             <span class="badge bg-primary">User</span>
         </div>
@@ -264,7 +304,7 @@ $user = $stmt->get_result()->fetch_assoc();
                         <tr>
                             <th>Role</th>
                             <td>
-                                <span class="badge bg-info text-dark">
+                                <span class="badge bg-primary">
                                     <?= ucfirst($user['role']) ?>
                                 </span>
                             </td>
@@ -276,20 +316,20 @@ $user = $stmt->get_result()->fetch_assoc();
                     </table>
 
                     <!-- ACTION BUTTON -->
-                    <div class="d-flex gap-2">
+                    <div class="d-flex ps-md-2">
 
                         <!-- <button class="btn btn-primary"
                             data-bs-toggle="modal"
                             data-bs-target="#changeDataModal">
                             <i class="bi bi-pencil-square"></i> Edit Profil
                         </button> -->
-                        <button class="btn btn-warning ms-2"
+                        <button class="btn btn-warning d-inline-flex align-items-center"
                             data-bs-toggle="modal"
                             data-bs-target="#changePasswordModal">
-                            <i class="bi bi-key"></i> Ganti Password
+                            <i class="bi bi-key"></i>
+                            <span>Ganti Password</span>
                         </button>
                     </div>
-
                 </div>
 
             </div>
@@ -402,7 +442,27 @@ $user = $stmt->get_result()->fetch_assoc();
     endif; ?>
 
 
+    <script>
+        document.getElementById('changePasswordForm')
+            .addEventListener('submit', function(e) {
 
+                e.preventDefault(); // hentikan submit default
+
+                Swal.fire({
+                    title: 'Konfirmasi Perubahan Password',
+                    text: 'Apakah Anda yakin ingin mengganti password?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Ganti',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#f59e0b'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        e.target.submit(); // submit form manual
+                    }
+                });
+            });
+    </script>
 </body>
 
 </html>

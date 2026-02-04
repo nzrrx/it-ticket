@@ -85,6 +85,7 @@ $previewMessages = $stmtPreview->get_result();
 
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/hp.css" rel="stylesheet">
 
     <style>
         body {
@@ -183,6 +184,29 @@ $previewMessages = $stmtPreview->get_result();
             <i class="bi bi-box-arrow-right me-2"></i> Logout
         </a>
     </div>
+
+    <div class="mobile-nav-bar d-md-none">
+    <a href="ticket.php" class="nav-item active">
+        <i class="bi bi-house-door"></i>
+        <span>Home</span>
+    </a>
+    <a href="ticket-admin.php" class="nav-item">
+        <i class="bi bi-ticket-perforated"></i>
+        <span>Semua Tiket</span>
+    </a>
+    <a href="data-user.php" class="nav-item">
+        <i class="bi bi-people me-2"></i>
+        <span>Data User</span>
+    </a>
+    <a href="#" class="nav-item">
+        <i class="bi bi-gear"></i>
+        <span>Pengaturan</span>
+    </a>
+    <a href="logout.php" class="nav-item">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+</div>
 
     <!-- CONTENT -->
     <div class="content">
