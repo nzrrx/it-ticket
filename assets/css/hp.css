@@ -1,0 +1,105 @@
+/* Styling Khusus HP (Max-width 768px) */
+@media (max-width: 768px) {
+    body { padding-bottom: 70px; } /* Ruang untuk bottom nav */
+
+    .sidebar { display: none !important; }
+    .content { margin-left: 0 !important; padding: 15px !important; }
+
+    /* Bottom Navigation Bar */
+    .mobile-nav-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 65px;
+        background: #ffffff;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+        z-index: 1000;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    .nav-item {
+        text-decoration: none;
+        color: #64748b;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.75rem;
+        transition: 0.3s;
+        border: none;
+        background: none;
+    }
+
+    .nav-item i { font-size: 1.3rem; margin-bottom: 2px; }
+    .nav-item.active { color: #0ea5e9; font-weight: bold; }
+
+    .action-btn {
+        background: #0ea5e9 !important;
+        color: white !important;
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        margin-top: -30px; /* Floating effect */
+        box-shadow: 0 5px 15px rgba(14,165,233,0.4);
+    }
+
+    /* Fullscreen Overlay Menu */
+    .mobile-menu-overlay {
+        position: fixed;
+        bottom: -100%; /* Sembunyi di bawah */
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(8px);
+        z-index: 2000;
+        transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .mobile-menu-overlay.active { bottom: 0; }
+
+    .menu-content {
+        background: white;
+        width: 100%;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
+        padding: 30px 20px;
+    }
+
+    .menu-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 15px;
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .grid-item {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        text-decoration: none;
+        color: #334155;
+        font-weight: 500;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        transition: 0.2s;
+    }
+
+    .grid-item i { font-size: 1.8rem; color: #0ea5e9; }
+    .grid-item:active { background: #e2e8f0; transform: scale(0.95); }
+}
