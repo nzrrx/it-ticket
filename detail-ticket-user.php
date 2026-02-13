@@ -116,7 +116,61 @@ $stmt->execute();
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link href="assets/css/hp.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f0f9ff;
+            font-family: 'Segoe UI', sans-serif
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #0ea5e9, #0284c7);
+            position: fixed;
+            color: #fff
+        }
+
+        .sidebar a {
+            color: #e0f2fe;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 5px
+        }
+
+        .sidebar h4 {
+            font-weight: 700;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: rgba(255, 255, 255, .2)
+        }
+
+        .content {
+            margin-left: 260px;
+            padding: 30px
+        }
+
+        .card {
+            border: none;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(14, 165, 233, .2)
+        }
+
+        .badge-open {
+            background: #3b82f6
+        }
+
+        .badge-process {
+            background: #f59e0b
+        }
+
+        .badge-closed {
+            background: #22c55e
+        }
+    </style>
 </head>
 
 <body>

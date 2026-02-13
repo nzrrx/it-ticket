@@ -50,8 +50,8 @@ $stmt->bind_param("ssss", $name, $email, $passwordHash, $role);
 $stmt->execute();
 
 /* FLASH SUCCESS */
-$_SESSION['flash_success'] = 'User berhasil dibuat.';
-
-header("Location: user-add.php");
+$_SESSION['flash_success'] = 'User berhasil ditambahkan.';
+header("Location: data-user.php");
 exit;
+
 ?>

@@ -177,6 +177,7 @@ $userList = $conn->query("
             color: #ffffff;
             border: none;
         }
+
     </style>
 </head>
 
@@ -208,11 +209,11 @@ $userList = $conn->query("
     </div>
 
        <div class="mobile-nav-bar d-md-none">
-    <a href="ticket.php" class="nav-item active">
+    <a href="ticket.php" class="nav-item">
         <i class="bi bi-house-door"></i>
         <span>Home</span>
     </a>
-    <a href="ticket-admin.php" class="nav-item">
+    <a href="ticket-admin.php" class="nav-item active">
         <i class="bi bi-ticket-perforated"></i>
         <span>Semua Tiket</span>
     </a>
@@ -354,9 +355,9 @@ $(document).ready(function () {
                     Anda belum memiliki tiket.
                 </div>
             <?php else: ?>
-
+                <div class="table-responsive-container">
                 <table class="table table-hover align-middle">
-                    <thead class="table-light text-center">
+                    <thead class="table-light text-center sticky-header">
                         <tr>
                             <th>
                                 <input type="checkbox" id="checkAll">
@@ -385,9 +386,9 @@ $(document).ready(function () {
                                 </td>
 
                                 <td><?= $no++ ?></td>
-                                <td><?= $row['user_name'] ?></td>
+                                <td><?= htmlspecialchars($row['user_name']) ?></td>
                                 <td><?= htmlspecialchars($row['subject']) ?></td>
-                                <td><?= $row['category'] ?></td>
+                                <td><?= htmlspecialchars($row['category']) ?></td>
                                 <td>
                                     <span class="badge bg-<?=
                                                             $row['priority'] == 'High' ? 'danger' : ($row['priority'] == 'Medium' ? 'warning' : 'secondary')
@@ -402,7 +403,7 @@ $(document).ready(function () {
                                         <?= $row['status'] ?>
                                     </span>
                                 </td>
-                                <td><?= date('d M Y H:i', strtotime($row['created_at'])) ?></td>
+                                <td class="text-nowrap"><?= date('d M Y H:i', strtotime($row['created_at'])) ?></td>
                                 <td>
                                     <?php if (
                                         in_array($row['status'], ['Closed', 'In Progress'])
@@ -415,7 +416,7 @@ $(document).ready(function () {
                                         <span class="text-muted">-</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?= date('d M Y H:i', strtotime($row['updated_at'])) ?></td>
+                                <td class="text-nowrap"><?= date('d M Y H:i', strtotime($row['updated_at'])) ?></td>
 
                             </tr>
                         <?php endwhile; ?>
@@ -423,16 +424,34 @@ $(document).ready(function () {
                 </table>
 
             <?php endif; ?>
+                </div>
         </div>
     </div>
     </div>
 
     <script>
-        document.getElementById('checkAll')?.addEventListener('change', function() {
-            document.querySelectorAll('.ticket-check').forEach(cb => {
+        // document.getElementById('checkAll')?.addEventListener('change', function() {
+        //     document.querySelectorAll('.ticket-check').forEach(cb => {
+        //         cb.checked = this.checked;
+        //     });
+        // });
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const checkAll = document.getElementById('checkAll');
+    const checkboxes = document.querySelectorAll('.ticket-check');
+
+    if (checkAll) {
+        checkAll.addEventListener('click', function(e) {
+            e.stopPropagation(); // Mencegah trigger klik pada row header jika ada
+            checkboxes.forEach(cb => {
                 cb.checked = this.checked;
             });
         });
+    }
+
+    // Melindungi integritas data: Pastikan semua redirect menggunakan casting ID yang aman
+    // Navigasi baris sudah ditangani via onclick di HTML dengan (int) casting untuk keamanan.
+});
     </script>
 
     <script>

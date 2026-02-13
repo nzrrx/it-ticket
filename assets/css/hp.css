@@ -102,4 +102,40 @@
 
     .grid-item i { font-size: 1.8rem; color: #0ea5e9; }
     .grid-item:active { background: #e2e8f0; transform: scale(0.95); }
+    /* Container untuk mengizinkan scroll horizontal tanpa merusak layout luar */
+.table-responsive-container {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Scroll halus di iOS */
+    position: relative;
+}
+
+/* Memastikan tabel memiliki lebar yang cukup agar tidak tertekuk di mobile */
+.table-responsive-container table {
+    min-width: 760px; /* Nilai ini memastikan tabel bisa di-scroll ke kanan */
+    margin-bottom: 0;
+    border-collapse: collapse;
+}
+
+/* Membuat Header tetap berada di atas saat scroll vertikal (Enterprise Standard) */
+.sticky-header th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa !important; /* Warna sesuai table-light */
+    z-index: 2;
+    box-shadow: inset 0 -1px 0 #dee2e6; /* Pengganti border agar tetap terlihat saat sticky */
+}
+
+/* Mencegah teks tanggal pecah menjadi dua baris agar tabel tetap presisi */
+.text-nowrap {
+    white-space: nowrap !important;
+}
+
+/* Perbaikan untuk checkbox agar tetap di tengah */
+.ticket-check, #checkAll {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
 }

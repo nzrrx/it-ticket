@@ -13,7 +13,7 @@ $sql = "
     SELECT id, name, email, role, created_at
     FROM users
     WHERE name LIKE ?
-    ORDER BY role DESC
+    ORDER BY name ASC
 ";
 
 $stmt = $conn->prepare($sql);
@@ -34,6 +34,7 @@ if ($result->num_rows === 0) {
 $no = 1;
 while ($row = $result->fetch_assoc()):
 ?>
+
 <tr>
     <td><?= $no++ ?></td>
     <td><?= htmlspecialchars($row['name']) ?></td>
@@ -44,11 +45,21 @@ while ($row = $result->fetch_assoc()):
         </span>
     </td>
     <td><?= date('d M Y', strtotime($row['created_at'])) ?></td>
-    <td>
+    <td class="text-center">
+
         <a href="edit-data-user.php?id=<?= $row['id'] ?>"
            class="btn btn-sm btn-outline-primary">
            <i class="bi bi-pencil-square"></i> Edit
         </a>
+
+        <button type="button"
+                class="btn btn-sm btn-outline-danger btn-delete"
+                data-id="<?= $row['id'] ?>"
+                data-name="<?= htmlspecialchars($row['name']) ?>">
+            <i class="bi bi-trash"></i> Hapus
+        </button>
+
     </td>
 </tr>
+
 <?php endwhile; ?>

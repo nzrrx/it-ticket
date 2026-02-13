@@ -80,13 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<?php if ($success): ?>
-    <div class="alert alert-success alert-dismissible fade show">
-        <?= $success ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<?php endif; ?>
-
 <?php if ($error): ?>
     <div class="alert alert-danger alert-dismissible fade show">
         <?= $error ?>
@@ -230,14 +223,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100" id="submitBtn">
-                            <span id="btnText">
-                                <i class="bi bi-send"></i> Kirim Tiket
-                            </span>
+                            <i id="btnText"
+                                 class="bi bi-send"></i> Kirim Tiket
+                    </i>
                             <span id="btnLoading" class="d-none">
                                 <span class="spinner-border spinner-border-sm"></span> Mengirim...
                             </span>
                         </button>
-
+                        
 
                     </form>
 

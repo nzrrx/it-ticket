@@ -6,8 +6,19 @@ $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $email = trim($_POST["email"]);
-    $password = $_POST["password"];
+$email    = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+
+    if (!$email || !$password) {
+        $error = "Email dan password wajib diisi!";
+    }
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Format email tidak valid!";
+    }
+    elseif (strlen($password) < 6) {
+        $error = "Password minimal 6 karakter!";
+    }
+    else {
 
     // Prepared statement
     $stmt = $conn->prepare("SELECT id, email, password, role, name FROM users WHERE email = ?");
@@ -33,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $error = "Email atau password salah!";
+}
 }
 ?>
 

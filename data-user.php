@@ -17,7 +17,7 @@ $stmt = $conn->prepare("
     role,
     created_at
 FROM users
-ORDER BY role DESC;
+ORDER BY name asc;
 ");
 $stmt->execute();
 $tickets = $stmt->get_result();
@@ -37,7 +37,7 @@ if (!empty($keyword)) {
     $types .= "s";
 }
 
-$sql .= " ORDER BY role DESC";
+$sql .= " ORDER BY name asc";
 
 $stmt = $conn->prepare($sql);
 
@@ -59,6 +59,7 @@ $tickets = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link href="assets/css/hp.css" rel="stylesheet">
 
 <style>
@@ -105,6 +106,27 @@ body {
     <title>Data User</title>
 </head>
 <body>
+    <?php if (isset($_SESSION['flash_success'])): ?>
+<script>
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil',
+    text: '<?= $_SESSION['flash_success']; ?>',
+    timer: 1800,
+    showConfirmButton: false
+});
+</script>
+<?php unset($_SESSION['flash_success']); endif; ?>
+
+<?php if (isset($_SESSION['flash_error'])): ?>
+<script>
+Swal.fire({
+    icon: 'error',
+    title: 'Gagal',
+    text: '<?= $_SESSION['flash_error']; ?>'
+});
+</script>
+<?php unset($_SESSION['flash_error']); endif; ?>
 
     <!-- SIDEBAR -->
 <div class="sidebar p-4">
@@ -132,7 +154,7 @@ body {
 </div>
 
    <div class="mobile-nav-bar d-md-none">
-    <a href="ticket.php" class="nav-item active">
+    <a href="ticket.php" class="nav-item">
         <i class="bi bi-house-door"></i>
         <span>Home</span>
     </a>
@@ -140,7 +162,7 @@ body {
         <i class="bi bi-ticket-perforated"></i>
         <span>Semua Tiket</span>
     </a>
-    <a href="data-user.php" class="nav-item">
+    <a href="data-user.php" class="nav-item active">
         <i class="bi bi-people me-2"></i>
         <span>Data User</span>
     </a>
@@ -177,18 +199,6 @@ body {
     </div>
 </div>
 
-
-    <!-- <form method="GET" class="row g-2 mb-3 align-items-end">
-
-    <div class="col-md-4">
-        <input type="text"
-               name="keyword"
-               class="form-control"
-               placeholder="Cari nama user..."
-               value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>">
-    </div> -->
-
-
     <div class="card shadow-sm border-0">
         <div class="card-body">
 
@@ -198,6 +208,9 @@ body {
                 </div>
             <?php else: ?>
 
+    <div class="mb-3">
+                <strong>Total User :</strong> <?= $tickets->num_rows ?>
+                <div class="table-responsive-container">
             <table class="table table-hover align-middle">
                 <thead class="table-light">
                     <tr>
@@ -206,7 +219,7 @@ body {
                         <th>Email</th>
                         <th>Role</th>
                         <th>Tanggal Dibuat</th>
-                        <th>Aksi</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="userTable">
@@ -221,11 +234,16 @@ body {
                     </span>
                         </td>
                         <td><?= date('d M Y', strtotime($row['created_at'])) ?></td>
-                        <td>
+                        <td class="text-center">
                             <a href="edit-data-user.php?id=<?= $row['id'] ?>"
    class="btn btn-sm btn-outline-primary">
    <i class="bi bi-pencil-square"></i> Edit
 </a>
+<button class="btn btn-sm btn-outline-danger btn-delete"
+        data-id="<?= $row['id']; ?>"
+        data-name="<?= htmlspecialchars($row['name']); ?>">
+    <i class="bi bi-trash"></i> Hapus
+</button>
 
                         </td>
                     </tr>
@@ -234,6 +252,8 @@ body {
             </table>
 
             <?php endif; ?>
+            </div>
+        </div>
         </div>
     </div>
 </div>
@@ -257,6 +277,63 @@ searchInput.addEventListener('keyup', function () {
     }, 300); // debounce 300ms
 });
 </script>
+
+<script>
+document.getElementById('userTable').addEventListener('click', function (e) {
+
+    const btn = e.target.closest('.btn-delete');
+    if (!btn) return;
+
+    const userId   = btn.dataset.id;
+    const userName = btn.dataset.name;
+    const row      = btn.closest('tr');
+
+    Swal.fire({
+        title: 'Yakin ingin menghapus?',
+        html: `User <b>${userName}</b> akan dihapus permanen!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            fetch('delete-user.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ id: userId })
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.status === 'success') {
+                    row.remove();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire('Gagal', data.message, 'error');
+                }
+
+            })
+            .catch(() => {
+                Swal.fire('Error', 'Terjadi kesalahan server!', 'error');
+            });
+        }
+    });
+});
+</script>
+
+
 
 </body>
 </html>

@@ -51,64 +51,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && !isset($
 
     $status = $_POST['status'];
 
-    // ❌ Jika tiket sudah Closed & bukan emergency → BLOK
-    if ($ticket['status'] === 'Closed' && empty($_POST['emergency'])) {
-        header("Location: detail-ticket.php?id={$ticket_id}&error=locked");
+    // 🔒 HARD LOCK: Closed tidak bisa diubah lagi
+    if ($ticket['status'] === 'Closed') {
+        header("Location: detail-ticket.php?id={$ticket_id}&locked=1");
         exit;
     }
 
-
-    // =====================
-    // STATUS: IN PROGRESS
-    // =====================
-    if ($status === 'In Progress') {
-
-        $update = $conn->prepare("
-            UPDATE tickets
-            SET status = 'In Progress',
-                assigned_to = ?,
-                updated_at = NOW()
-            WHERE id = ?
-        ");
-        $update->bind_param("ii", $admin_id, $ticket_id);
-        $update->execute();
+    if (!in_array($status, ['Open', 'In Progress', 'Closed'])) {
+        header("Location: detail-ticket.php?id={$ticket_id}&error=invalid");
+        exit;
     }
 
-    // =====================
-    // STATUS: CLOSED
-    // =====================
-    elseif ($status === 'Closed') {
-
-        $update = $conn->prepare("
-            UPDATE tickets
-            SET status = 'Closed',
-                assigned_to = ?,
-                updated_at = NOW()
-            WHERE id = ?
-        ");
-        $update->bind_param("ii", $admin_id, $ticket_id);
-        $update->execute();
-    }
-
-    // =====================
-    // STATUS: OPEN (RESET)
-    // =====================
-    elseif ($status === 'Open') {
-
-        $update = $conn->prepare("
-            UPDATE tickets
-            SET status = 'Open',
-                assigned_to = NULL,
-                updated_at = NOW()
-            WHERE id = ?
-        ");
-        $update->bind_param("i", $ticket_id);
-        $update->execute();
-    }
+    $update = $conn->prepare("
+        UPDATE tickets
+        SET status = ?,
+            assigned_to = ?,
+            updated_at = NOW()
+        WHERE id = ?
+    ");
+    $update->bind_param("sii", $status, $admin_id, $ticket_id);
+    $update->execute();
 
     header("Location: detail-ticket.php?id={$ticket_id}");
     exit;
 }
+
 
 /* =====================
    SIMPAN CHAT ADMIN
@@ -371,7 +338,7 @@ $stmt->execute();
                 <div class="card p-4">
                     <h5 class="mb-3">⚙️ Aksi Admin</h5>
 
-                    <form method="POST">
+                    <form method="POST" id="statusForm">
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select" required>
@@ -463,6 +430,56 @@ $stmt->execute();
                 </div>
 
             </div>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+const form = document.getElementById('statusForm');
+const statusSelect = form.querySelector('select[name="status"]');
+
+let oldStatus = "<?= $ticket['status'] ?>";
+
+form.addEventListener('submit', function (e) {
+
+    if (statusSelect.value === 'Closed' && oldStatus !== 'Closed') {
+
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Yakin ingin menutup tiket?',
+            html: `
+                <p>Tiket yang sudah <b>Closed</b>:</p>
+                <ul class="text-start">
+                    <li>Tidak bisa dibuka kembali</li>
+                    <li>Percakapan akan dikunci</li>
+                    <li>Status bersifat permanen</li>
+                </ul>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Tutup Tiket',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#dc3545'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+
+    }
+
+});
+</script>
+<?php if (isset($_GET['locked'])): ?>
+<script>
+Swal.fire({
+    icon: 'error',
+    title: 'Aksi Ditolak',
+    text: 'Tiket yang sudah ditutup tidak bisa dibuka kembali.',
+    confirmButtonColor: '#dc3545'
+});
+</script>
+<?php endif; ?>
+
 </body>
 
 </html>

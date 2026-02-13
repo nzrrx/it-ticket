@@ -12,13 +12,33 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     exit;
 }
 
-$id = $_GET['id'];
+$id = $_GET['id'] ?? 0;
 
-$stmt = $conn->prepare("
-    SELECT id, name, email, role
-    FROM users
-    WHERE id = ?
-");
+// Ambil data target user
+$stmt = $conn->prepare("SELECT id, role FROM users WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$userTarget = $stmt->get_result()->fetch_assoc();
+
+if (!$userTarget) {
+    die("User tidak ditemukan!");
+}
+
+// Jika target adalah admin dan bukan dirinya sendiri → BLOK
+if (
+    $userTarget['role'] === 'admin' &&
+    $id != $_SESSION['user_id']
+) {
+    echo "<script>
+        alert('Anda tidak diizinkan mengedit akun admin lain!');
+        window.location='data-user.php';
+    </script>";
+    exit;
+}
+
+$id = (int) $_GET['id'];
+
+$stmt = $conn->prepare("SELECT id, name, email, role FROM users WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
@@ -28,34 +48,57 @@ if (!$user) {
     exit;
 }
 
+$error = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name  = trim($_POST['name']);
-    $email = trim($_POST['email']);
-    $role  = $_POST['role'];
 
-    if (!empty($_POST['password'])) {
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $name     = trim($_POST['name']);
+    $email    = trim($_POST['email']);
+    $role     = $_POST['role'];
+    $password = $_POST['password'];
 
-        $stmt = $conn->prepare("
-            UPDATE users
-            SET name=?, email=?, role=?, password=?
-            WHERE id=?
-        ");
-        $stmt->bind_param("ssssi", $name, $email, $role, $password, $id);
-    } else {
-        $stmt = $conn->prepare("
-            UPDATE users
-            SET name=?, email=?, role=?
-            WHERE id=?
-        ");
-        $stmt->bind_param("sssi", $name, $email, $role, $id);
+        /* ===== VALIDASI FORMAT EMAIL ===== */
+    if (!$error && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Format email tidak valid!";
     }
 
-    $stmt->execute();
-    header("Location: data-user.php");
-    exit;
-}
+    /* ===== VALIDASI EMAIL DUPLIKAT ===== */
+    $cek = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+    $cek->bind_param("si", $email, $id);
+    $cek->execute();
+    $cek->store_result();
 
+    if ($cek->num_rows > 0) {
+        $error = "Email sudah digunakan user lain!";
+    }
+
+    /* ===== VALIDASI PASSWORD ===== */
+    if (!$error && !empty($password) && strlen($password) < 6) {
+        $error = "Password minimal 6 karakter!";
+    }
+
+    if (!$error) {
+
+        if (!empty($password)) {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("
+                UPDATE users SET name=?, email=?, role=?, password=? WHERE id=?
+            ");
+            $stmt->bind_param("ssssi", $name, $email, $role, $hash, $id);
+        } else {
+            $stmt = $conn->prepare("
+                UPDATE users SET name=?, email=?, role=? WHERE id=?
+            ");
+            $stmt->bind_param("sssi", $name, $email, $role, $id);
+        }
+
+        $stmt->execute();
+
+        $_SESSION['flash_success'] = "Data user berhasil diperbarui";
+        header("Location: data-user.php");
+        exit;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -70,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="bootstrap.bundle.min.js"></script>
 
 
@@ -159,6 +203,13 @@ body {
 </div>
 
 <div class="card-body">
+    <?php if (!empty($error)): ?>
+<div class="alert alert-danger d-flex align-items-center">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <?= htmlspecialchars($error) ?>
+</div>
+<?php endif; ?>
+
 <form id="editUserForm" method="POST">
 
 <div class="mb-3">
@@ -193,57 +244,13 @@ body {
     <a href="data-user.php" class="btn btn-secondary">
         <i class="bi bi-arrow-left"></i> Kembali
     </a>
-    <button type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#confirmSaveModal">
-        <i class="bi bi-save"></i> Simpan Perubahan
-    </button>
+    <button type="button" class="btn btn-primary" id="btnSave">
+    <i class="bi bi-save"></i> Simpan Perubahan
+</button>
+
 </div>
 
 </form>
-<!-- MODAL KONFIRMASI SIMPAN -->
-<div class="modal fade" id="confirmSaveModal" tabindex="-1"
-     aria-labelledby="confirmSaveLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg">
-
-      <div class="modal-header bg-warning-subtle">
-        <h5 class="modal-title fw-semibold" id="confirmSaveLabel">
-          <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
-          Konfirmasi Perubahan Data
-        </h5>
-        <button type="button" class="btn-close"
-                data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body">
-        <p class="mb-2">
-          Anda akan menyimpan <strong>perubahan data user</strong>.
-        </p>
-        <p class="text-muted small mb-0">
-          Pastikan data yang diubah sudah benar.  
-          Kesalahan pengeditan dapat mempengaruhi hak akses pengguna.
-        </p>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button"
-                class="btn btn-outline-secondary"
-                data-bs-dismiss="modal">
-          <i class="bi bi-x-circle"></i> Batal
-        </button>
-
-        <button type="button"
-                class="btn btn-primary"
-                id="confirmSubmitBtn">
-          <i class="bi bi-check-circle"></i> Ya, Simpan
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
 
 
 </div>
@@ -251,17 +258,48 @@ body {
         </div>
 </div>
 <script>
-document.getElementById('confirmSubmitBtn')
-    .addEventListener('click', function () {
+document.getElementById('btnSave').addEventListener('click', function () {
 
-        // Disable tombol agar tidak double submit
-        this.disabled = true;
-        this.innerHTML =
-            '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+    const password = document.querySelector('input[name="password"]').value;
+    const email = document.querySelector('input[name="email"]').value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        document.getElementById('editUserForm').submit();
+    if (email && !emailRegex.test(email)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Email Tidak Valid',
+            text: 'Silakan masukkan format email yang benar',
+        });
+        return;
+    }
+
+    if (password !== '' && password.length < 6) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Password Tidak Valid',
+            text: 'Password minimal harus 6 karakter',
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Simpan Perubahan?',
+        text: 'Data user akan diperbarui di sistem.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Simpan',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('editUserForm').submit();
+        }
     });
+
+});
 </script>
+
 
 </body>
 </html>

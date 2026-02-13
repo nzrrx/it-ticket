@@ -224,11 +224,11 @@ if ($stmt->execute()) {
     </div>
 
        <div class="mobile-nav-bar d-md-none">
-    <a href="ticket.php" class="nav-item active">
+    <a href="ticket.php" class="nav-item">
         <i class="bi bi-house-door"></i>
         <span>Home</span>
     </a>
-    <a href="ticket-admin.php" class="nav-item">
+    <a href="ticket-admin.php" class="nav-item active">
         <i class="bi bi-ticket-perforated"></i>
         <span>Semua Tiket</span>
     </a>
