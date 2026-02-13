@@ -116,13 +116,8 @@ $previewMessages = $stmtPreview->get_result();
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link href="assets/css/hp.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
     <script src="assets/js/dashboard.js" type="text/javascript"></script>
-
-
-    <style>
-
-    </style>
 </head>
 <body>
 
@@ -248,7 +243,7 @@ $previewMessages = $stmtPreview->get_result();
 </div>
 
 
-        <!-- STAT CARDS -->
+            <!-- STAT CARDS -->
         <div class="row g-4 mb-4">
             <div class="col-md-3">
                 <div class="card card-stat p-4">

@@ -78,20 +78,6 @@ if ($stmt->execute()) {
     }
     ?>
 
-    <?php if ($success): ?>
-    <div class="alert alert-success alert-dismissible fade show">
-        <?= $success ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    <?php endif; ?>
-
-    <?php if ($error): ?>
-    <div class="alert alert-danger alert-dismissible fade show">
-        <?= $error ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    <?php endif; ?>
-
 
     <!DOCTYPE html>
     <html lang="id">
@@ -283,14 +269,6 @@ if ($stmt->execute()) {
                     <h5 class="mb-3">
                         <i class="bi bi-plus-circle me-2"></i> Form Tiket Baru
                     </h5>
-
-                    <?php if ($success): ?>
-                        <div class="alert alert-success"><?= $success ?></div>
-                    <?php endif; ?>
-
-                    <?php if ($error): ?>
-                        <div class="alert alert-danger"><?= $error ?></div>
-                    <?php endif; ?>
 
                     <form method="POST" enctype="multipart/form-data">
 
