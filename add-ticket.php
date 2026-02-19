@@ -26,6 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Judul dan deskripsi wajib diisi.";
     }
 
+    if (strlen($subject) > 100) {
+        $error = "Judul tiket maksimal 100 karakter.";
+    }
+
+    if (strlen($description) > 255) {
+        $error = "Deskripsi maksimal 255 karakter.";
+    }
+
     // VALIDASI FILE
     if (!$error && !empty($_FILES['attachment']['name'])) {
 
@@ -80,13 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<?php if ($error): ?>
-    <div class="alert alert-danger alert-dismissible fade show">
-        <?= $error ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<?php endif; ?>
-
 
 <!DOCTYPE html>
 <html lang="id">
@@ -101,7 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/css/hp.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
+
 <body>
 
     <!-- SIDEBAR -->
@@ -126,27 +131,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <div class="mobile-nav-bar d-md-none">
-    <a href="dashboard.php" class="nav-item active">
-        <i class="bi bi-house-door"></i>
-        <span>Home</span>
-    </a>
-    <a href="ticket-user.php" class="nav-item">
-        <i class="bi bi-ticket-perforated"></i>
-        <span>Tiket Saya</span>
-    </a>
-    <a href="add-ticket.php" class="nav-item">
-        <i class="bi bi-plus-circle"></i>
-        <span>Buat Tiket</span>
-    </a>
-    <a href="profil.php" class="nav-item">
-        <i class="bi bi-person"></i>
-        <span>Profil</span>
-    </a>
-    <a href="logout.php" class="nav-item">
-        <i class="bi bi-box-arrow-right"></i>
-        <span>Logout</span>
-    </a>
-</div>
+        <a href="dashboard.php" class="nav-item">
+            <i class="bi bi-house-door"></i>
+            <span>Home</span>
+        </a>
+        <a href="ticket-user.php" class="nav-item">
+            <i class="bi bi-ticket-perforated"></i>
+            <span>Tiket Saya</span>
+        </a>
+        <a href="add-ticket.php" class="nav-item active">
+            <i class="bi bi-plus-circle"></i>
+            <span>Buat Tiket</span>
+        </a>
+        <a href="profil.php" class="nav-item">
+            <i class="bi bi-person"></i>
+            <span>Profil</span>
+        </a>
+        <a href="logout.php" class="nav-item">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+    </div>
 
     <!-- CONTENT -->
     <div class="content">
@@ -173,20 +178,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <i class="bi bi-plus-circle me-2"></i> Form Tiket Baru
                     </h5>
 
-                    <?php if ($success): ?>
-                        <div class="alert alert-success"><?= $success ?></div>
-                    <?php endif; ?>
-
-                    <?php if ($error): ?>
-                        <div class="alert alert-danger"><?= $error ?></div>
-                    <?php endif; ?>
-
                     <form method="POST" enctype="multipart/form-data">
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Judul Tiket</label>
-                            <input type="text" name="subject" class="form-control"
-                                placeholder="Contoh: Laptop tidak bisa menyala" required>
+                            <input type="text" name="subject" id="subject"
+                                maxlength="100"
+                                class="form-control"
+                                placeholder="Contoh: Laptop tidak bisa menyala"
+                                required>
+                            <small class="text-muted">Maksimal 100 karakter</small>
                         </div>
 
                         <div class="mb-3">
@@ -211,8 +212,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Deskripsi Masalah</label>
-                            <textarea name="description" rows="5" class="form-control"
-                                placeholder="Jelaskan masalah secara detail..." required></textarea>
+                            <textarea name="description" id="description"
+                                rows="5"
+                                maxlength="255"
+                                class="form-control"
+                                placeholder="Jelaskan masalah secara detail..."
+                                required></textarea>
+                            <small class="text-muted">Maksimal 255 karakter</small>
                         </div>
 
                         <div class="mb-4">
@@ -224,13 +230,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <button type="submit" class="btn btn-primary w-100" id="submitBtn">
                             <i id="btnText"
-                                 class="bi bi-send"></i> Kirim Tiket
-                    </i>
+                                class="bi bi-send"></i> Kirim Tiket
+                            </i>
                             <span id="btnLoading" class="d-none">
                                 <span class="spinner-border spinner-border-sm"></span> Mengirim...
                             </span>
                         </button>
-                        
+
 
                     </form>
 
@@ -248,6 +254,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById("btnLoading").classList.remove("d-none");
         });
     </script>
+
+    <script>
+        const subject = document.getElementById('subject');
+        const description = document.getElementById('description');
+
+        subject.addEventListener('input', () => {
+            if (subject.value.length > 100) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Terlalu Panjang',
+                    text: 'Judul tiket maksimal 100 karakter!',
+                    confirmButtonColor: '#0d6efd'
+                });
+                subject.value = subject.value.substring(0, 100);
+            }
+        });
+
+        description.addEventListener('input', () => {
+            if (description.value.length > 255) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Terlalu Panjang',
+                    text: 'Deskripsi maksimal 255 karakter!',
+                    confirmButtonColor: '#0d6efd'
+                });
+                description.value = description.value.substring(0, 255);
+            }
+        });
+    </script>
+    <?php if ($success): ?>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '<?= $success ?>',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        </script>
+    <?php endif; ?>
+
+
 
 
 </body>

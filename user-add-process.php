@@ -1,57 +1,55 @@
 <?php
 session_start();
-include 'includes/db.php';
+require 'includes/db.php';
+
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../login.php");
+    echo json_encode(['status'=>'error','message'=>'Unauthorized']);
     exit;
 }
 
-$name     = trim($_POST['name']);
-$email    = trim($_POST['email']);
-$password = $_POST['password'];
-$role     = $_POST['role'];
+$name     = trim($_POST['name'] ?? '');
+$email    = trim($_POST['email'] ?? '');
+$password = $_POST['password'] ?? '';
+$role     = $_POST['role'] ?? '';
 
-/* VALIDASI DASAR */
-if (empty($name) || empty($email) || empty($password) || empty($role)) {
-    $_SESSION['flash_error'] = 'Semua field wajib diisi.';
-    header("Location: user-add.php");
+if (!$name || !$email || !$password || !$role) {
+    echo json_encode(['status'=>'error','message'=>'Semua field wajib diisi.']);
     exit;
 }
 
-/* VALIDASI PANJANG PASSWORD (minimal 6 karakter) */
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(['status'=>'error','message'=>'Format email tidak valid.']);
+    exit;
+}
+
 if (strlen($password) < 6) {
-    $_SESSION['flash_error'] = 'Password harus minimal 6 karakter.';
-    header("Location: user-add.php");
+    echo json_encode(['status'=>'error','message'=>'Password minimal 6 karakter.']);
     exit;
 }
 
-/* HASH PASSWORD */
-$passwordHash = password_hash($password, PASSWORD_DEFAULT);
-
-/* CEK EMAIL DUPLIKAT */
 $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
 $check->bind_param("s", $email);
 $check->execute();
 $check->store_result();
 
 if ($check->num_rows > 0) {
-    $_SESSION['flash_error'] = 'Email sudah terdaftar.';
-    header("Location: user-add.php");
+    echo json_encode(['status'=>'error','message'=>'Email sudah terdaftar.']);
     exit;
 }
 
-/* SIMPAN USER */
+$passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
 $stmt = $conn->prepare("
     INSERT INTO users (name, email, password, role, created_at)
     VALUES (?, ?, ?, ?, NOW())
 ");
+
 $stmt->bind_param("ssss", $name, $email, $passwordHash, $role);
-$stmt->execute();
 
-/* FLASH SUCCESS */
-$_SESSION['flash_success'] = 'User berhasil ditambahkan.';
-header("Location: data-user.php");
-exit;
-
-?>
+if ($stmt->execute()) {
+    echo json_encode(['status'=>'success','message'=>'User berhasil ditambahkan.']);
+} else {
+    echo json_encode(['status'=>'error','message'=>'Gagal menyimpan data.']);
+}

@@ -24,17 +24,17 @@ if (!$userTarget) {
     die("User tidak ditemukan!");
 }
 
-// Jika target adalah admin dan bukan dirinya sendiri → BLOK
-if (
-    $userTarget['role'] === 'admin' &&
-    $id != $_SESSION['user_id']
-) {
-    echo "<script>
-        alert('Anda tidak diizinkan mengedit akun admin lain!');
-        window.location='data-user.php';
-    </script>";
-    exit;
-}
+// // Jika target adalah admin dan bukan dirinya sendiri → BLOK
+// if (
+//     $userTarget['role'] === 'admin' &&
+//     $id != $_SESSION['user_id']
+// ) {
+//     echo "<script>
+//         alert('Anda tidak diizinkan mengedit akun admin lain!');
+//         window.location='data-user.php';
+//     </script>";
+//     exit;
+// }
 
 $id = (int) $_GET['id'];
 
@@ -224,13 +224,13 @@ body {
            value="<?= htmlspecialchars($user['email']) ?>" required>
 </div>
 
-<div class="mb-3">
+<!-- <div class="mb-3">
     <label class="form-label fw-semibold">Role</label>
     <select name="role" class="form-select">
         <option value="user" <?= $user['role']=='user'?'selected':'' ?>>User</option>
         <option value="admin" <?= $user['role']=='admin'?'selected':'' ?>>Admin</option>
     </select>
-</div>
+</div> -->
 
 <div class="mb-3">
     <label class="form-label fw-semibold">

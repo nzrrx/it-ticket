@@ -233,7 +233,7 @@ $user = $stmt->get_result()->fetch_assoc();
     </div>
 
     <div class="mobile-nav-bar d-md-none">
-    <a href="dashboard.php" class="nav-item active">
+    <a href="dashboard.php" class="nav-item">
         <i class="bi bi-house-door"></i>
         <span>Home</span>
     </a>
@@ -245,7 +245,7 @@ $user = $stmt->get_result()->fetch_assoc();
         <i class="bi bi-plus-circle"></i>
         <span>Buat Tiket</span>
     </a>
-    <a href="profil.php" class="nav-item">
+    <a href="profil.php" class="nav-item active">
         <i class="bi bi-person"></i>
         <span>Profil</span>
     </a>

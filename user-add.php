@@ -168,33 +168,48 @@ body{
 </div>
 </div>
 <script>
-document.getElementById('addUserForm').addEventListener('submit', function (e) {
+document.getElementById('addUserForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const password = document.querySelector('input[name="password"]').value;
-
-    // VALIDASI PANJANG PASSWORD
-    if (password.length < 6) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Password Terlalu Pendek',
-            text: 'Password harus minimal 6 karakter!'
-        });
-        return;
-    }
+    const formData = new FormData(this);
 
     Swal.fire({
-        title: 'Tambah User?',
-        text: 'Pastikan data sudah benar sebelum disimpan.',
+        title: 'Simpan User?',
+        text: 'Pastikan data sudah benar.',
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Ya, Simpan',
         cancelButtonText: 'Batal',
         confirmButtonColor: '#0d6efd'
     }).then((result) => {
+
         if (result.isConfirmed) {
-            this.submit();
+
+            fetch('user-add-process.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location = 'data-user.php';
+                    });
+                } else {
+                    Swal.fire('Gagal', data.message, 'error');
+                }
+
+            });
+
         }
+
     });
 });
 </script>

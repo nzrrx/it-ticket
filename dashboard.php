@@ -115,14 +115,15 @@ $previewMessages = $stmtPreview->get_result();
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="assets/css/hp.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <script src="assets/js/dashboard.js" type="text/javascript"></script>
 </head>
 <body>
 
 <!-- SIDEBAR -->
-<div class="sidebar d-none d-md-block" id="sidebar">
+<div class="sidebar p-4">
     <h4 class="mb-4">🎫 MICS IT</h4>
 
     <a href="dashboard.php"  class="active">
@@ -244,7 +245,7 @@ $previewMessages = $stmtPreview->get_result();
 
 
             <!-- STAT CARDS -->
-        <div class="row g-4 mb-4">
+        <div class="row g-2 mb-4">
             <div class="col-md-3">
                 <div class="card card-stat p-4">
                     <i class="bi bi-ticket-perforated mb-2"></i>

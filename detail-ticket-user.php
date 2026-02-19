@@ -197,11 +197,11 @@ $stmt->execute();
     </div>
 
     <div class="mobile-nav-bar d-md-none">
-    <a href="dashboard.php" class="nav-item active">
+    <a href="dashboard.php" class="nav-item">
         <i class="bi bi-house-door"></i>
         <span>Home</span>
     </a>
-    <a href="ticket-user.php" class="nav-item">
+    <a href="ticket-user.php" class="nav-item active">
         <i class="bi bi-ticket-perforated"></i>
         <span>Tiket Saya</span>
     </a>

@@ -352,7 +352,7 @@ $(document).ready(function () {
 
             <?php if ($tickets->num_rows === 0): ?>
                 <div class="alert alert-info text-center">
-                    Anda belum memiliki tiket.
+                    Tiket tidak Ditemukan. Coba ubah filter pencarian Anda.
                 </div>
             <?php else: ?>
                 <div class="table-responsive-container">

@@ -80,11 +80,11 @@ $tickets = $stmt->get_result();
     </div>
 
     <div class="mobile-nav-bar d-md-none">
-    <a href="dashboard.php" class="nav-item active">
+    <a href="dashboard.php" class="nav-item">
         <i class="bi bi-house-door"></i>
         <span>Home</span>
     </a>
-    <a href="ticket-user.php" class="nav-item">
+    <a href="ticket-user.php" class="nav-item active">
         <i class="bi bi-ticket-perforated"></i>
         <span>Tiket Saya</span>
     </a>
@@ -103,73 +103,44 @@ $tickets = $stmt->get_result();
 </div>
 
     <div class="content">
-        <h4 class="mb-4">
-            <i class="bi bi-ticket-perforated"></i> Tiket Saya
-        </h4>
-
-            <div class="card-body">
-
-                <?php if ($tickets->num_rows === 0): ?>
-                    <div class="alert alert-info text-center">
-                        Anda belum memiliki tiket.
-                    </div>
-                <?php else: ?>
-
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>Judul</th>
-                                <th>Kategori</th>
-                                <th>Prioritas</th>
-                                <th>Status</th>
-                                <th>Dibuat</th>
-                                <th>Jam</th>
-                                <th>Checked By</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $no = 1;
-                            while ($row = $tickets->fetch_assoc()): ?>
-                                <tr onclick="window.location='detail-ticket-user.php?id=<?= $row['id'] ?>'"
-                                    style="cursor:pointer;">
-                                    <td><?= $no++ ?></td>
-                                    <td><?= htmlspecialchars($row['subject']) ?></td>
-                                    <td><?= $row['category'] ?></td>
-                                    <td>
-                                        <span class="badge bg-<?=
-                                                                $row['priority'] == 'High' ? 'danger' : ($row['priority'] == 'Medium' ? 'warning' : 'secondary')
-                                                                ?>">
-                                            <?= $row['priority'] ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-<?=
-                                                                $row['status'] == 'Open' ? 'primary' : ($row['status'] == 'In Progress' ? 'info' : ($row['status'] == 'Solved' ? 'success' : 'dark'))
-                                                                ?>">
-                                            <?= $row['status'] ?>
-                                        </span>
-                                    </td>
-                                    <td><?= date('d M Y', strtotime($row['created_at'])) ?></td>
-                                    <td><?php echo date('H:i', strtotime($row['created_at'])) ?></td>
-                                    <td>
-                                        <?php if (
-                                            in_array($row['status'], ['Closed', 'In Progress'])
-                                            && !empty($row['admin_name'])
-                                        ): ?>
-                                            <span class="badge bg-success">
-                                                <?= htmlspecialchars($row['admin_name']) ?>
-                                            </span>
-                                        <?php else: ?>
-                                            <span class="text-muted">-</span>
-                                        <?php endif; ?>
-                                    </td>
-
-
-                                <?php endwhile; ?>
-                        </tbody>
-                    </table>
-
-                <?php endif; ?>
-            </div>
+    <h4 class="mb-4"><i class="bi bi-ticket-perforated"></i> Tiket Saya</h4>
+    
+    <div id="ticket-container">
+        <div class="text-center p-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p>Memuat data...</p>
+        </div>
     </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Fungsi untuk memuat data
+    function loadTickets(page) {
+        $.ajax({
+            url: "fetch-ticket-user.php",
+            method: "POST",
+            data: { page: page },
+            success: function(data) {
+                $('#ticket-container').html(data);
+            },
+            error: function() {
+                $('#ticket-container').html('<div class="alert alert-danger">Gagal memuat data.</div>');
+            }
+        });
+    }
+
+    // Load halaman pertama saat pertama kali buka
+    loadTickets(1);
+
+    // Handle klik pada tombol pagination
+    $(document).on('click', '.btn-pagination', function(e) {
+        e.preventDefault();
+        var page = $(this).data('page');
+        loadTickets(page);
+        
+        // Scroll ke atas sedikit agar user tahu konten berubah
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+    });
+});
+</script>
