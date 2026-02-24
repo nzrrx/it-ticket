@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (isset($_SESSION['login'])) {
+    header("Location: index.php");
+    exit;
+}
 include 'includes/db.php';
 
 $error = "";
@@ -88,7 +92,7 @@ $email    = trim($_POST['email'] ?? '');
                     <span class="input-group-text">
                         <i class="bi bi-envelope"></i>
                     </span>
-                    <input type="email" name="email" class="form-control" placeholder="Masukkan email" required>
+                    <input type="email" value="<?php echo htmlspecialchars($email ?? ''); ?>" name="email" class="form-control" placeholder="Masukkan email" required>
                 </div>
             </div>
 
