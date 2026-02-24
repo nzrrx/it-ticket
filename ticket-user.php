@@ -104,6 +104,8 @@ $tickets = $stmt->get_result();
 
     <div class="content">
     <h4 class="mb-4"><i class="bi bi-ticket-perforated"></i> Tiket Saya</h4>
+
+    <br>
     
     <div id="ticket-container">
         <div class="text-center p-5">

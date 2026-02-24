@@ -308,7 +308,7 @@ $stmt->execute();
                     <hr>
         <h5 class="mb-3">💬 Percakapan</h5>
 
-        <div style="max-height:350px; overflow-y:auto">
+        <div id="chatBox" style="max-height:350px; overflow-y:auto">
 
             <?php if ($chats->num_rows > 0): ?>
                 <?php while ($c = $chats->fetch_assoc()): ?>
@@ -375,6 +375,14 @@ $stmt->execute();
         </div>
 
     </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const chatBox = document.getElementById("chatBox");
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    });
+</script>
 </body>
 
 </html>

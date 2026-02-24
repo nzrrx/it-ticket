@@ -41,7 +41,18 @@ $stmt->bind_param("iii", $user_id, $start, $limit);
 $stmt->execute();
 $tickets = $stmt->get_result();
 
+
+
 if ($tickets->num_rows > 0): ?>
+
+
+<div class="card card-form p-4" style=" border-radius:20px; border: none;
+            box-shadow: 0 15px 30px rgba(14, 165, 233, .25); 
+            background-color:#fff;
+            padding:20px; bottom:20px; position:relative;">
+            
+<link href="assets/css/ticket.css" rel="stylesheet">
+<div class="table-responsive-container">
     <table class="table table-hover align-middle">
         <thead class="table-light">
             <tr>
@@ -52,7 +63,7 @@ if ($tickets->num_rows > 0): ?>
                 <th>Status</th>
                 <th>Dibuat</th>
                 <th>Jam</th>
-                <th>Checked By</th>
+                <th class="text-nowrap">Assigned By</th>
             </tr>
         </thead>
         <tbody>
@@ -71,7 +82,7 @@ if ($tickets->num_rows > 0): ?>
                             <?= $row['status'] ?>
                         </span>
                     </td>
-                    <td><?= date('d M Y', strtotime($row['created_at'])) ?></td>
+                    <td class="text-nowrap"><?= date('d M Y', strtotime($row['created_at'])) ?></td>
                     <td><?= date('H:i', strtotime($row['created_at'])) ?></td>
                     <td>
                         <?= (!empty($row['admin_name']) && in_array($row['status'], ['Closed', 'In Progress'])) 
@@ -82,6 +93,8 @@ if ($tickets->num_rows > 0): ?>
             <?php endwhile; ?>
         </tbody>
     </table>
+    </div>
+</div>
 
     <nav>
         <ul class="pagination justify-content-end">
@@ -93,5 +106,5 @@ if ($tickets->num_rows > 0): ?>
         </ul>
     </nav>
 <?php else: ?>
-    <div class="alert alert-info text-center">Anda belum memiliki tiket.</div>
+    <div class="alert alert-info text-center">Anda belum memiliki tiket. Silakan buat tiket terlebih dahulu!.</div>
 <?php endif; ?>

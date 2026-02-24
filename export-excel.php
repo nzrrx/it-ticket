@@ -103,7 +103,7 @@ echo "<table border='1'>
     <th>Prioritas</th>
     <th>Status</th>
     <th>Dibuat</th>
-    <th>Diclose Oleh</th>
+    <th>Assigned By</th>
     <th>Diupdate</th>
 </tr>";
 

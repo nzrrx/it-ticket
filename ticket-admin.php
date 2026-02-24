@@ -121,64 +121,7 @@ $userList = $conn->query("
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <link href="assets/css/hp.css" rel="stylesheet">
-
-
-    <style>
-        body {
-            background-color: #f0f9ff;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background: linear-gradient(180deg, #0ea5e9, #0284c7);
-            position: fixed;
-            color: #fff;
-        }
-
-        .sidebar a {
-            color: #e0f2fe;
-            text-decoration: none;
-            display: block;
-            padding: 12px 20px;
-            border-radius: 10px;
-            margin-bottom: 5px;
-            transition: .3s;
-        }
-
-        .sidebar a.active,
-        .sidebar a:hover {
-            background: rgba(255, 255, 255, .2);
-        }
-
-        .sidebar h4 {
-            font-weight: 700
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: rgba(255, 255, 255, .2)
-        }
-
-        .content {
-            margin-left: 260px;
-            padding: 30px;
-        }
-
-        .badge-status {
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-        }
-
-        .btn-btn-primary {
-            background: linear-gradient(180deg, #0ea5e9, #0284c7);
-            color: #ffffff;
-            border: none;
-        }
-
-    </style>
+    <link href="assets/css/ticket.css" rel="stylesheet">
 </head>
 
 <body>

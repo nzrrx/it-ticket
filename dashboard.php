@@ -283,7 +283,7 @@ $previewMessages = $stmtPreview->get_result();
     <div class="card p-4 card-stat">
         <h5 class="mb-2">📢 Informasi</h5>
         <p class="text-muted mb-0">
-            Gunakan menu di samping untuk membuat dan memantau tiket IT Anda.
+            Gunakan menu yang tersedia untuk membuat dan memantau tiket IT Anda.
             Pastikan data yang dikirim lengkap agar proses lebih cepat.
         </p>
     </div>
@@ -350,7 +350,7 @@ $previewMessages = $stmtPreview->get_result();
                  data-bs-parent="#accordionGlossary">
                 <div class="accordion-body text-muted">
                     <ul class="mb-0">
-                        <li><strong>Hardware</strong> — Masalah perangkat fisik (PC, printer, dll).</li>
+                        <li><strong>Hardware</strong> — Masalah perangkat fisik (PC, Laptop, printer, dll).</li>
                         <li><strong>Software</strong> — Masalah aplikasi atau sistem operasi.</li>
                         <li><strong>Network</strong> — Kendala jaringan atau koneksi internet.</li>
                         <li><strong>Email</strong> — Masalah akun email perusahaan.</li>
@@ -375,7 +375,7 @@ $previewMessages = $stmtPreview->get_result();
                 <div class="accordion-body text-muted">
                     Pastikan deskripsi tiket ditulis secara jelas dan lengkap,
                     sertakan informasi pendukung seperti pesan error, lokasi,
-                    dan jenis perangkat agar proses penanganan dapat dilakukan
+                    dan urgensi permasalahan agar proses penanganan dapat dilakukan
                     lebih cepat dan tepat.
                 </div>
             </div>

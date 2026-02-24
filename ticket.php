@@ -29,7 +29,7 @@ $closed = $conn->query("
 
 /* TIKET TERBARU */
 $latest = $conn->query("
-    SELECT t.id, t.subject, t.status, t.created_at, u.name
+    SELECT t.id, t.subject, t.status, t.created_at, t.category, u.name
     FROM tickets t
     JOIN users u ON t.user_id = u.id
     ORDER BY t.created_at DESC
@@ -323,23 +323,28 @@ $previewMessages = $stmtPreview->get_result();
         <div class="card p-4 card-stat">
             <h5 class="mb-3">📌 Tiket Terbaru</h5>
 
-            <table class="table align-middle">
+            <div class= "table-responsive-container">
+            <table class="table table-hover align-middle">
+        <thead class="table-light">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Subject</th>
                         <th>User</th>
+                        <th>Kategori</th>
                         <th>Status</th>
                         <th>Tanggal</th>
-                        <th>Aksi</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($t = $latest->fetch_assoc()): ?>
-                        <tr>
+                        <tr onclick="window.location='detail-ticket.php?id=<?= $t['id'] ?>'"
+                                style="cursor:pointer;">
                             <td>#<?php echo $t['id'] ?></td>
                             <td><?php echo htmlspecialchars($t['subject']) ?></td>
                             <td><?php echo $t['name'] ?></td>
+                            <td><?= htmlspecialchars($t['category']) ?></td>
                             <td>
                                 <span class="badge bg-<?=
                                                                 $t['status'] == 'Open' ? 'primary' : ($t['status'] == 'In Progress' ? 'info' : ($t['status'] == 'Solved' ? 'success' : 'dark'))
@@ -347,12 +352,7 @@ $previewMessages = $stmtPreview->get_result();
                                             <?= $t['status'] ?>
                                         </span>
                             </td>
-                            <td><?php echo date('d M Y', strtotime($t['created_at'])) ?></td>
-                            <td>
-                                <a href="detail-ticket.php?id=<?php echo $t['id'] ?>" class="btn btn-sm">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            </td>
+                            <td class="text-nowrap"><?php echo date('d M Y', strtotime($t['created_at'])) ?></td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>

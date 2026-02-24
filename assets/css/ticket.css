@@ -1,0 +1,89 @@
+
+        body {
+            background-color: #f0f9ff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #0ea5e9, #0284c7);
+            position: fixed;
+            color: #fff;
+        }
+
+        .sidebar a {
+            color: #e0f2fe;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: .3s;
+        }
+
+        .sidebar a.active,
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, .2);
+        }
+
+        .sidebar h4 {
+            font-weight: 700
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: rgba(255, 255, 255, .2)
+        }
+
+        .content {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .btn-btn-primary {
+            background: linear-gradient(180deg, #0ea5e9, #0284c7);
+            color: #ffffff;
+            border: none;
+        }
+        .table-responsive-container {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Scroll halus di iOS */
+    position: relative;
+}
+
+/* Memastikan tabel memiliki lebar yang cukup agar tidak tertekuk di mobile */
+.table-responsive-container table {
+    min-width: 760px; /* Nilai ini memastikan tabel bisa di-scroll ke kanan */
+    margin-bottom: 0;
+    border-collapse: collapse;
+}
+
+/* Membuat Header tetap berada di atas saat scroll vertikal (Enterprise Standard) */
+.sticky-header th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa !important; /* Warna sesuai table-light */
+    z-index: 2;
+    box-shadow: inset 0 -1px 0 #dee2e6; /* Pengganti border agar tetap terlihat saat sticky */
+}
+
+/* Mencegah teks tanggal pecah menjadi dua baris agar tabel tetap presisi */
+.text-nowrap {
+    white-space: nowrap !important;
+}
+
+/* Perbaikan untuk checkbox agar tetap di tengah */
+.ticket-check, #checkAll {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
