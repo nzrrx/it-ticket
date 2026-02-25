@@ -109,7 +109,7 @@ $userList = $conn->query("
 
 <head>
     <meta charset="UTF-8">
-    <title>Tiket Saya | MICS IT</title>
+    <title>Semua Tiket | MICS IT</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">

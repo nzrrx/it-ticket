@@ -95,6 +95,17 @@ $stmtPreview->bind_param("ii", $user_id, $user_id);
 $stmtPreview->execute();
 $previewMessages = $stmtPreview->get_result();
 
+/* AMBIL DATA USER */
+$stmt = $conn->prepare("
+    SELECT name
+    FROM users
+    WHERE id = ?
+    LIMIT 1
+");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+
 
 ?>
 
@@ -122,48 +133,7 @@ $previewMessages = $stmtPreview->get_result();
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar p-4">
-    <h4 class="mb-4">🎫 MICS IT</h4>
-
-    <a href="dashboard.php"  class="active">
-        <i class="bi bi-speedometer2 me-2"></i> Dashboard
-    </a>
-    <a href="add-ticket.php">
-        <i class="bi bi-plus-circle me-2"></i> Buat Tiket
-    </a>
-    <a href="ticket-user.php">
-        <i class="bi bi-ticket-detailed me-2"></i> Tiket Saya
-    </a>
-    <a href="profil.php">
-        <i class="bi bi-person me-2"></i> Profil
-    </a>
-    <a href="logout.php">
-        <i class="bi bi-box-arrow-right me-2"></i> Logout
-    </a>
-</div>
-<div class="mobile-nav-bar d-md-none">
-    <a href="dashboard.php" class="nav-item active">
-        <i class="bi bi-house-door"></i>
-        <span>Home</span>
-    </a>
-    <a href="ticket-user.php" class="nav-item">
-        <i class="bi bi-ticket-perforated"></i>
-        <span>Tiket Saya</span>
-    </a>
-    <a href="add-ticket.php" class="nav-item">
-        <i class="bi bi-plus-circle"></i>
-        <span>Buat Tiket</span>
-    </a>
-    <a href="profil.php" class="nav-item">
-        <i class="bi bi-person"></i>
-        <span>Profil</span>
-    </a>
-    <a href="logout.php" class="nav-item">
-        <i class="bi bi-box-arrow-right"></i>
-        <span>Logout</span>
-    </a>
-</div>
+<?php include "layout/sidebar.html"; ?>
 
 <!-- CONTENT -->
 <div class="content">
@@ -171,7 +141,7 @@ $previewMessages = $stmtPreview->get_result();
     <!-- TOP BAR -->
     <div class="topbar d-flex flex-wrap gap-3 justify-content-between align-items-center">
     <div>
-        <h5 class="mb-0">Selamat datang 👋</h5>
+        <h5 class="mb-0">Selamat datang, <?= htmlspecialchars($user['name']) ?> 👋</h5>
         <small class="text-muted"><?= $_SESSION['email']; ?></small>
     </div>
 

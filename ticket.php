@@ -36,19 +36,21 @@ $latest = $conn->query("
     LIMIT 5
     ");
     
-    /* HITUNG PESAN BARU (TANPA is_read) */
+    /* HITUNG PESAN BARU UNTUK ADMIN INI (BELUM DIBACA) */
 $stmtNotif = $conn->prepare("
     SELECT COUNT(*) AS total
     FROM ticket_replies m
     JOIN tickets t ON m.ticket_id = t.id
+    LEFT JOIN admin_message_reads amr ON m.id = amr.message_id AND amr.admin_id = ?
     WHERE m.user_id != ?
-      AND m.is_read = 0
+      AND amr.id IS NULL
 ");
-$stmtNotif->bind_param("i", $admin_id);
+$stmtNotif->bind_param("ii", $admin_id, $admin_id);
 $stmtNotif->execute();
 $unreadMessage = $stmtNotif->get_result()->fetch_assoc()['total'];
 
-/* PREVIEW PESAN (MAX 2 HARI TERAKHIR) */
+/* PREVIEW PESAN UNTUK ADMIN INI (BELUM DIBACA) */
+/* 🔒 Filter: Jangan tampilkan pesan dari admin itu sendiri */
 $stmtPreview = $conn->prepare("
     SELECT 
         m.id,
@@ -58,11 +60,13 @@ $stmtPreview = $conn->prepare("
         u.name
     FROM ticket_replies m
     JOIN users u ON m.user_id = u.id
-    WHERE u.role = 'user'
-      AND m.is_read = 0
+    LEFT JOIN admin_message_reads amr ON m.id = amr.message_id AND amr.admin_id = ?
+    WHERE m.user_id != ?
+      AND amr.id IS NULL
     ORDER BY m.created_at DESC
     LIMIT 5
 ");
+$stmtPreview->bind_param("ii", $admin_id, $admin_id);
 $stmtPreview->execute();
 $previewMessages = $stmtPreview->get_result();
 

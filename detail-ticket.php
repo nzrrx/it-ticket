@@ -113,22 +113,37 @@ $replies = $conn->prepare("
     ORDER BY r.created_at ASC
 ");
 
-//mark read
+//mark read for this admin
 $replies->bind_param("i", $ticket_id);
 $replies->execute();
 $chats = $replies->get_result();
 
-$ticket_id = (int) $_GET['id'];
-
-$stmt = $conn->prepare("
-    UPDATE ticket_replies
-    SET is_read = 1
-    WHERE ticket_id = ?
-      AND user_id != ?
-      AND is_read = 0
+// 🔒 MARK ALL UNREAD MESSAGES FROM THIS TICKET AS READ FOR THIS ADMIN
+// Ambil semua message_id yang belum dibaca admin ini
+$getUnreadMessages = $conn->prepare("
+    SELECT m.id
+    FROM ticket_replies m
+    LEFT JOIN admin_message_reads amr ON m.id = amr.message_id AND amr.admin_id = ?
+    WHERE m.ticket_id = ?
+      AND m.user_id != ?
+      AND amr.id IS NULL
 ");
-$stmt->bind_param("ii", $ticket_id, $admin_id);
-$stmt->execute();
+$getUnreadMessages->bind_param("iii", $admin_id, $ticket_id, $admin_id);
+$getUnreadMessages->execute();
+$unreadMsgs = $getUnreadMessages->get_result();
+
+// Insert ke admin_message_reads
+if ($unreadMsgs->num_rows > 0) {
+    $insertRead = $conn->prepare("
+        INSERT IGNORE INTO admin_message_reads (message_id, admin_id, read_at)
+        VALUES (?, ?, NOW())
+    ");
+    
+    while ($msg = $unreadMsgs->fetch_assoc()) {
+        $insertRead->bind_param("ii", $msg['id'], $admin_id);
+        $insertRead->execute();
+    }
+}
 
 
 ?>
@@ -230,11 +245,11 @@ $stmt->execute();
     </div>
 
        <div class="mobile-nav-bar d-md-none">
-    <a href="ticket.php" class="nav-item active">
+    <a href="ticket.php" class="nav-item">
         <i class="bi bi-house-door"></i>
         <span>Home</span>
     </a>
-    <a href="ticket-admin.php" class="nav-item">
+    <a href="ticket-admin.php" class="nav-item active">
         <i class="bi bi-ticket-perforated"></i>
         <span>Semua Tiket</span>
     </a>
@@ -369,7 +384,7 @@ $stmt->execute();
                 <div class="card p-4">
                     <h5 class="mb-3">💬 Percakapan</h5>
 
-                    <div style="max-height:350px; overflow-y:auto">
+                    <div id="chatBox" style="max-height:350px; overflow-y:auto">
 
                         <?php if ($chats->num_rows > 0): ?>
                             <?php while ($c = $chats->fetch_assoc()): ?>
@@ -479,7 +494,14 @@ Swal.fire({
 });
 </script>
 <?php endif; ?>
-
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const chatBox = document.getElementById("chatBox");
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    });
+</script>
 </body>
 
 </html>

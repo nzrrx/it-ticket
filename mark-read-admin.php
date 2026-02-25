@@ -13,13 +13,29 @@ if (!isset($_POST['message_id'])) {
 }
 
 $message_id = (int) $_POST['message_id'];
+$admin_id = (int) $_SESSION['user_id'];
 
+// 🔒 Verifikasi message_id valid
+$verify = $conn->prepare("SELECT id FROM ticket_replies WHERE id = ?");
+$verify->bind_param("i", $message_id);
+$verify->execute();
+if ($verify->get_result()->num_rows === 0) {
+    http_response_code(404);
+    exit;
+}
+
+// ✅ Insert atau update read status untuk admin specific
 $stmt = $conn->prepare("
-    UPDATE ticket_replies
-    SET is_read = 1
-    WHERE id = ?
+    INSERT INTO admin_message_reads (message_id, admin_id, read_at)
+    VALUES (?, ?, NOW())
+    ON DUPLICATE KEY UPDATE read_at = NOW()
 ");
-$stmt->bind_param("i", $message_id);
-$stmt->execute();
+$stmt->bind_param("ii", $message_id, $admin_id);
+$success = $stmt->execute();
 
-echo 'OK';
+if ($success) {
+    echo 'OK';
+} else {
+    http_response_code(500);
+    echo 'Error';
+}
